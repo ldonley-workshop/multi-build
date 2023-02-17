@@ -25,7 +25,9 @@ spec:
           steps {
             checkout scm
             container('maven') {
-              sh 'cd maven-demo && mvn package'
+              dir('maven-demo') {
+                sh 'mvn package'
+              }
             }
           }
         }
@@ -52,7 +54,9 @@ spec:
           steps {
             checkout scm
             container('gradle') {
-              sh 'cd gradle-demo && ./gradlew build'
+              dir('gradle-demo') {
+                sh './gradlew build'
+              }
             }
           }
         }
@@ -78,7 +82,9 @@ spec:
           steps {
             checkout scm
             container('cargo') {
-              sh 'cd rust-demo && cargo build'
+              dir('cargo-demo') {
+                sh 'cargo build'
+              }
             }
           }
         }
