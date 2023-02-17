@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build and Test') {
       parallel {
-        stage('Build and Test Maven Project') {
+        stage('Maven') {
           agent {
             kubernetes {
               label 'maven'
@@ -24,7 +24,7 @@ spec:
             }
           }
           stages {
-            stage('Build Maven Project') {
+            stage('Maven build') {
               steps {
                 checkout scm
                 container('maven') {
@@ -35,7 +35,7 @@ spec:
                 archiveArtifacts artifacts: 'maven-demo/target/**/*.jar', fingerprint: true
               }
             }
-            stage('Test Maven Project') {
+            stage('Maven test') {
               steps {
                 container('maven') {
                   dir('maven-demo') {
@@ -46,7 +46,7 @@ spec:
             }
           }
         }
-        stage('Build and Test Gradle Project') {
+        stage('Gradle') {
           agent {
             kubernetes {
               label 'gradle'
@@ -67,7 +67,7 @@ spec:
             }
           }
           stages {
-            stage('Build Gradle Project') {
+            stage('Gradle build') {
               steps {
                 checkout scm
                 container('gradle') {
@@ -78,7 +78,7 @@ spec:
                 archiveArtifacts artifacts: 'gradle-demo/lib/build/**/*.jar', fingerprint: true
               }
             }
-            stage('Test Gradle Project') {
+            stage('Gradle test') {
               steps {
                 container('gradle') {
                   dir('gradle-demo') {
@@ -89,7 +89,7 @@ spec:
             }
           }
         }
-        stage('Build and Test Cargo Project') {
+        stage('Cargo') {
           agent {
             kubernetes {
               label 'cargo'
@@ -110,7 +110,7 @@ spec:
             }
           }
           stages {
-            stage('Build Cargo Project') {
+            stage('Cargo build') {
               steps {
                 checkout scm
                 container('cargo') {
@@ -120,7 +120,7 @@ spec:
                 }
               }
             }
-            stage('Test Cargo Project') {
+            stage('Cargo test') {
               steps {
                 container('cargo') {
                   dir('cargo-demo') {
