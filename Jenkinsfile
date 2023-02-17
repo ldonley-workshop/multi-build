@@ -6,7 +6,6 @@ pipeline {
         stage('Build Maven Project') {
           agent {
             kubernetes {
-              label 'maven'
               yaml """
 apiVersion: v1
 kind: Pod
@@ -16,7 +15,7 @@ metadata:
 spec:
   containers:
   - name: maven
-    image: maven:3.8.3-jdk-17-slim
+    image: maven:3.9.0-eclipse-temurin-17
     command:
     - cat
     tty: true
@@ -60,7 +59,6 @@ spec:
         stage('Build Cargo Project') {
           agent {
             kubernetes {
-              label 'cargo'
               yaml """
 apiVersion: v1
 kind: Pod
