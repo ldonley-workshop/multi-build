@@ -75,7 +75,7 @@ spec:
                     sh './gradlew build'
                   }
                 }
-                archiveArtifacts artifacts: 'gradle-demo/build/**/*.jar', fingerprint: true
+                archiveArtifacts artifacts: 'gradle-demo/lib/build/**/*.jar', fingerprint: true
               }
             }
             stage('Test Gradle Project') {
@@ -118,7 +118,6 @@ spec:
                     sh 'cargo build'
                   }
                 }
-                archiveArtifacts artifacts: 'cargo-demo/target/**/*.so', fingerprint: true
               }
             }
             stage('Test Cargo Project') {
