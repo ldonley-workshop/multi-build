@@ -1,11 +1,12 @@
 pipeline {
   agent none
   stages {
-    stage('Build') {
+    stage('Build and Test') {
       parallel {
-        stage('Build Maven Project') {
+        stage('Build and Test Maven Project') {
           agent {
             kubernetes {
+              label 'maven'
               yaml """
 apiVersion: v1
 kind: Pod
@@ -22,16 +23,30 @@ spec:
 """
             }
           }
-          steps {
-            checkout scm
-            container('maven') {
-              dir('maven-demo') {
-                sh 'mvn package'
+          stages {
+            stage('Build Maven Project') {
+              steps {
+                checkout scm
+                container('maven') {
+                  dir('maven-demo') {
+                    sh 'mvn package'
+                  }
+                }
+                archiveArtifacts artifacts: 'maven-demo/target/**/*.jar', fingerprint: true
+              }
+            }
+            stage('Test Maven Project') {
+              steps {
+                container('maven') {
+                  dir('maven-demo') {
+                    sh 'mvn test'
+                  }
+                }
               }
             }
           }
         }
-        stage('Build Gradle Project') {
+        stage('Build and Test Gradle Project') {
           agent {
             kubernetes {
               label 'gradle'
@@ -51,18 +66,33 @@ spec:
 """
             }
           }
-          steps {
-            checkout scm
-            container('gradle') {
-              dir('gradle-demo') {
-                sh './gradlew build'
+          stages {
+            stage('Build Gradle Project') {
+              steps {
+                checkout scm
+                container('gradle') {
+                  dir('gradle-demo') {
+                    sh './gradlew build'
+                  }
+                }
+                archiveArtifacts artifacts: 'gradle-demo/build/**/*.jar', fingerprint: true
+              }
+            }
+            stage('Test Gradle Project') {
+              steps {
+                container('gradle') {
+                  dir('gradle-demo') {
+                    sh './gradlew test'
+                  }
+                }
               }
             }
           }
         }
-        stage('Build Cargo Project') {
+        stage('Build and Test Cargo Project') {
           agent {
             kubernetes {
+              label 'cargo'
               yaml """
 apiVersion: v1
 kind: Pod
@@ -79,11 +109,25 @@ spec:
 """
             }
           }
-          steps {
-            checkout scm
-            container('cargo') {
-              dir('cargo-demo') {
-                sh 'cargo build'
+          stages {
+            stage('Build Cargo Project') {
+              steps {
+                checkout scm
+                container('cargo') {
+                  dir('cargo-demo') {
+                    sh 'cargo build'
+                  }
+                }
+                archiveArtifacts artifacts: 'cargo-demo/target/**/*.so', fingerprint: true
+              }
+            }
+            stage('Test Cargo Project') {
+              steps {
+                container('cargo') {
+                  dir('cargo-demo') {
+                    sh 'cargo test'
+                  }
+                }
               }
             }
           }
